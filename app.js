@@ -15,12 +15,26 @@ import get_service_hotmail from "./controller/get_service_hotmail.js"
 import get_service_gmail from "./controller/get_service_gmail.js"
 import upload_file_hotmail from "./controller/upload_file_hotmail.js"
 import upload_file_gmail from "./controller/upload_file_gmail.js"
+import buy_account from "./controller/buy_account.js"
+import { Server } from "socket.io"
+import { createServer } from "http"
+import get_receipt from "./controller/get_receipt.js"
+import buy_account_gmail from "./controller/buy_account_gmail.js"
+import dateFormat from "dateformat"
+import querystring from "qs"
+import crypto from "crypto"
+import get_user from "./controller/get_user.js"
+import delete_service_gmail from "./controller/delete_service_gmail.js"
+import delete_service_hotmail from "./controller/delete_service_hotmail.js"
+import check_payment from "./controller/check_payment.js"
 // import multer from "multer"
 // const upload= multer()
 
 dotenv.config()
 
 const app= express()
+const httpServer= createServer(app)
+const io= new Server(httpServer)
 app.use(cors())
 app.use(express.json())
 // app.use(upload.array())
@@ -41,6 +55,13 @@ app.get("/edit/get/hotmail", get_service_hotmail)
 app.get("/edit/get/gmail", get_service_gmail)
 app.post("/upload_file/hotmail", upload_file_hotmail)
 app.post("/upload_file/gmail", upload_file_gmail)
+app.post("/buy/account", buy_account)
+app.post("/buy/account/gmail", buy_account_gmail)
+app.get("/history", get_receipt)
+app.get("/get_user", get_user)
+app.post("/edit/delete/gmail", delete_service_gmail)
+app.post("/edit/delete/hotmail", delete_service_hotmail)
+app.post("/check/payment", check_payment)
 
 app.post('/create_payment_url', function (req, res, next) {
     var ipAddr = req.headers['x-forwarded-for'] ||
@@ -48,15 +69,10 @@ app.post('/create_payment_url', function (req, res, next) {
         req.socket.remoteAddress ||
         req.connection.socket.remoteAddress;
 
-    var config = require('config');
-    var dateFormat = require('dateformat');
-
-    
-    var tmnCode = config.get('vnp_TmnCode');
-    var secretKey = config.get('vnp_HashSecret');
-    var vnpUrl = config.get('vnp_Url');
-    var returnUrl = config.get('vnp_ReturnUrl');
-
+    var tmnCode = "9FZVLYLC";
+    var secretKey = "MEJRIRHWXZLNKQAIOPZLVNNPMEVTFHQX";
+    var vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+    var returnUrl = "http://localhost:3000/VnPayReturn";
     var date = new Date();
 
     var createDate = dateFormat(date, 'yyyymmddHHmmss');
@@ -88,20 +104,33 @@ app.post('/create_payment_url', function (req, res, next) {
     if(bankCode !== null && bankCode !== ''){
         vnp_Params['vnp_BankCode'] = bankCode;
     }
-
     vnp_Params = sortObject(vnp_Params);
-
-    var querystring = require('qs');
     var signData = querystring.stringify(vnp_Params, { encode: false });
-    var crypto = require("crypto");     
     var hmac = crypto.createHmac("sha512", secretKey);
     var signed = hmac.update(new Buffer(signData, 'utf-8')).digest("hex"); 
     vnp_Params['vnp_SecureHash'] = signed;
     vnpUrl += '?' + querystring.stringify(vnp_Params, { encode: false });
-
-    res.redirect(vnpUrl)
+    res.status(200).json({url: vnpUrl})
 });
+function sortObject(obj) {
+	var sorted = {};
+	var str = [];
+	var key;
+	for (key in obj){
+		if (obj.hasOwnProperty(key)) {
+		str.push(encodeURIComponent(key));
+		}
+	}
+	str.sort();
+    for (key = 0; key < str.length; key++) {
+        sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
+    }
+    return sorted;
+}
+io.on("connection", (socket)=> {
+    console.log(socket.id)
+})
 
 connectMongo()
 
-app.listen(process.env.PORT || 4000, ()=> console.log("Server run port 4000"))
+httpServer.listen(process.env.PORT || 4000, ()=> console.log("Server run port 4000"))
