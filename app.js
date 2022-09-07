@@ -27,6 +27,7 @@ import get_user from "./controller/get_user.js"
 import delete_service_gmail from "./controller/delete_service_gmail.js"
 import delete_service_hotmail from "./controller/delete_service_hotmail.js"
 import check_payment from "./controller/check_payment.js"
+import login_admin from "./controller/login_admin.js"
 // import multer from "multer"
 // const upload= multer()
 
@@ -62,6 +63,7 @@ app.get("/get_user", get_user)
 app.post("/edit/delete/gmail", delete_service_gmail)
 app.post("/edit/delete/hotmail", delete_service_hotmail)
 app.post("/check/payment", check_payment)
+app.post("/login/admin", login_admin)
 
 app.post('/create_payment_url', function (req, res, next) {
     var ipAddr = req.headers['x-forwarded-for'] ||

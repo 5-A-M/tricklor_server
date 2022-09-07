@@ -17,7 +17,7 @@ const buy_account= (req, res)=> {
                         if(err) throw err
                         else console.log(result2.deletedCount)
                     })
-                    dbconnection.collection("receipt").insertOne({code_receipt: v4(), amount: parseInt(req.body.price), state: true, note: "Mua tài khoản hotmail", time: new Date(), id_user: req.body.id_user})
+                    dbconnection.collection("receipt").insertOne({code_receipt: v4(), amount: -parseInt(req.body.price), state: true, note: "Mua tài khoản hotmail", time: new Date(), id_user: req.body.id_user})
                     return res.status(200).json({message: "Mua tài khoản thành công", data: {...result1}, purchase: true, code_bill: v4()})
                 })
             }
@@ -33,7 +33,7 @@ const buy_account= (req, res)=> {
                         if(err) throw err
                         else console.log(result2.deletedCount)
                     })
-                    dbconnection.collection("receipt").insertOne({code_receipt: v4(), amount: parseInt(req.body.price), state: true, note: "Mua tài khoản hotmail", time: new Date(), id_user: req.body.id_user})
+                    dbconnection.collection("receipt").insertOne({code_receipt: v4(), amount: -parseInt(req.body.price), state: true, note: "Mua tài khoản hotmail", time: new Date(), id_user: req.body.id_user})
                     return res.status(200).json({message: "Mua tài khoản thành công", data: {...result1}})
                 })
             }
