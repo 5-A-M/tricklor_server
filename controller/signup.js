@@ -10,7 +10,7 @@ const signup= (req, res)=> {
         }
         else {
             const id_key= v4()
-            dbconnection.collection("user").insertOne({account: req.body.account, password: md5(req.body.password), email: req.body.email, id_user: v4(), id_key: id_key, id_secret: md5(id_key), balance: 0, promotion: 0}, function(err, result) {
+            dbconnection.collection("user").insertOne({account: req.body.account, password: md5(req.body.password), email: req.body.email, id_user: v4(), id_key: id_key, id_secret: md5(id_key), balance: 0, promotion: 0, api_key: v4()}, function(err, result) {
                 if(err) throw err
                 return res.status(200).json({message: "Tạo tài khoản thành công", signup: true})
             })

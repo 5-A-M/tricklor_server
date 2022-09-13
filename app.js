@@ -30,6 +30,8 @@ import check_payment from "./controller/check_payment.js"
 import login_admin from "./controller/login_admin.js"
 import reset_password from "./controller/reset_password.js"
 import exist_account from "./controller/exist_account.js"
+import reset_admin from "./controller/reset_admin.js"
+import { reset_service } from "./controller/reset_service.js"
 // import multer from "multer"
 // const upload= multer()
 
@@ -68,6 +70,9 @@ app.post("/check/payment", check_payment)
 app.post("/login/admin", login_admin)
 app.post("/reset/password", reset_password)
 app.post("/check_exist/account", exist_account)
+app.post("/admin/reset", reset_admin)
+app.post("/reset/gmail", reset_service.reset_service_gmail)
+app.post("/reset/hotmail", reset_service.reset_service_hotmail)
 
 app.post('/create_payment_url', function (req, res, next) {
     var ipAddr = req.headers['x-forwarded-for'] ||

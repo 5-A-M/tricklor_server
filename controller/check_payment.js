@@ -6,8 +6,8 @@ const check_payment= async (req, res)=> {
         'Authorization': "Apikey AK_CS.9c2a8c602e5711ed81b149fc2c0f5c81.o3F5sEnl8s8N3n1EDI3m5fR1uMbXAn8aXmfkMiIfNiXjqg2niIqhGet2FYVSyhIc14K4IX1K"
     }})
     const body= await response.json()
-    return res.status(200).json(body)
-
+    return res.status(200).json(body.data.records?.[0])
+    
 }
 
 export default check_payment
