@@ -1,4 +1,6 @@
 import fetch from "node-fetch"
+import { v4 } from "uuid"
+import { dbconnection } from "../db/init.js"
 
 const check_payment= async (req, res)=> {
     const response= await fetch("https://oauth.casso.vn/v2/transactions?fromDate=2022-04-01&page=1&pageSize=20&sort=DESC", {headers: {
@@ -6,7 +8,24 @@ const check_payment= async (req, res)=> {
         'Authorization': "Apikey AK_CS.9c2a8c602e5711ed81b149fc2c0f5c81.o3F5sEnl8s8N3n1EDI3m5fR1uMbXAn8aXmfkMiIfNiXjqg2niIqhGet2FYVSyhIc14K4IX1K"
     }})
     const body= await response.json()
-    return res.status(200).json(body.data.records?.[0])
+    if(parseInt(req.body.recharge) === parseInt(body.data.records?.[0]?.amount) && req.body.content === body.data.records?.[0]?.description ) {
+        dbconnection.collection("user").updateOne({id_user: req.body.id_user}, {$set: {balance:parseInt(req.body.recharge) + parseInt(req.body.balance)}},function(err, result) {
+            if(err) throw err
+            else {
+                console.log(result.length)
+            }
+        })
+        const code_receipt= v4()
+        dbconnection.collection("receipt").insertOne({code_receipt: code_receipt, amount: req.body.recharge, state: true, note: "Nạp tiền từ hệ thống", time: new Date(), id_user: req.body.id_user}, function(err, result) {
+            if(err) throw err
+            else {
+                console.log(result.insertedId)
+            }
+        })
+        return res.status(200).json({status: true, message: "success"})
+    }
+
+    return res.status(200).json({status: false, message: "pending"})
     
 }
 

@@ -32,6 +32,12 @@ import reset_password from "./controller/reset_password.js"
 import exist_account from "./controller/exist_account.js"
 import reset_admin from "./controller/reset_admin.js"
 import { reset_service } from "./controller/reset_service.js"
+import detail_order_history from "./controller/detail_order_history.js"
+import get_token_qr_code from "./controller/get_token_qr_code.js"
+import remove_misscellaneous from "./controller/remove_misscellaneous.js"
+import render_text from "./controller/render_text.js"
+import { v4 } from "uuid"
+import send_mail_verify from "./background/send_mail_verify.js"
 // import multer from "multer"
 // const upload= multer()
 
@@ -39,7 +45,9 @@ dotenv.config()
 
 const app= express()
 const httpServer= createServer(app)
-const io= new Server(httpServer)
+const io= new Server(httpServer, {
+    cors: "*"
+})
 app.use(cors())
 app.use(express.json())
 // app.use(upload.array())
@@ -73,6 +81,11 @@ app.post("/check_exist/account", exist_account)
 app.post("/admin/reset", reset_admin)
 app.post("/reset/gmail", reset_service.reset_service_gmail)
 app.post("/reset/hotmail", reset_service.reset_service_hotmail)
+app.get("/detail_order/history", detail_order_history)
+app.post("/token/qr", get_token_qr_code)
+app.get("/remove/miscellaneous", remove_misscellaneous)
+app.post("/render/text", render_text)
+app.post("/auth/verify", send_mail_verify)
 
 app.post('/create_payment_url', function (req, res, next) {
     var ipAddr = req.headers['x-forwarded-for'] ||
@@ -139,7 +152,16 @@ function sortObject(obj) {
     return sorted;
 }
 io.on("connection", (socket)=> {
-    console.log(socket.id)
+    // console.log(socket.id)
+    socket.on("join_room", (data)=> {
+        console.log(data.id_room)
+        socket.join(data.id_room)
+        // console.log(io.sockets.adapter.rooms.get(data.id_room))
+        // console.log(io.sockets.adapter.rooms.get(data.id_room).size)
+        if(io.sockets.adapter.rooms.get(data.id_room).size > 1) {
+            io.to(data.id_room).emit("verify1", {is_verify_1: true, token: v4()})
+        }
+    })
 })
 
 connectMongo()
