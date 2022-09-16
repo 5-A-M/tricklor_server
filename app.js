@@ -38,6 +38,7 @@ import remove_misscellaneous from "./controller/remove_misscellaneous.js"
 import render_text from "./controller/render_text.js"
 import { v4 } from "uuid"
 import send_mail_verify from "./background/send_mail_verify.js"
+import get_user_2fa from "./controller/get_user_2fa.js"
 // import multer from "multer"
 // const upload= multer()
 
@@ -86,6 +87,7 @@ app.post("/token/qr", get_token_qr_code)
 app.get("/remove/miscellaneous", remove_misscellaneous)
 app.post("/render/text", render_text)
 app.post("/auth/verify", send_mail_verify)
+app.post("/2fa/user", get_user_2fa)
 
 app.post('/create_payment_url', function (req, res, next) {
     var ipAddr = req.headers['x-forwarded-for'] ||
@@ -162,6 +164,14 @@ io.on("connection", (socket)=> {
             io.to(data.id_room).emit("verify1", {is_verify_1: true, token: v4()})
         }
     })
+    //
+    socket.on("login_auth2", (data)=> {
+        socket.join(data.roomId)
+        if(io.sockets.adapter.rooms.get(data.roomId).size > 1 ) {
+            io.to(data.roomId).emit("twoFa", {is_verify: true, token: v4()})
+        } 
+    })
+    
 })
 
 connectMongo()

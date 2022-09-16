@@ -4,6 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "type": "module",
+  "scripts": {
+    "start": "nodemon app.js"
+  },
   "dependencies": {
     "byline": "^5.0.0",
     "config": "^3.3.7",
