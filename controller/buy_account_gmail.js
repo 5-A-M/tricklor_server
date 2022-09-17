@@ -1,3 +1,8 @@
+import { ObjectId } from "mongodb"
+import { v4 } from "uuid"
+import { dbconnection } from "../db/init.js"
+import moment from "moment"
+
 const buy_account_gmail= (req, res)=> {
     if((parseInt(req.body.balance) + parseInt(req.body.promotion)) < parseInt(req.body.price)) {
         dbconnection.collection("receipt").insertOne({code_receipt: v4(), amount: 0, state: false, note: "Mua tài khoản thất bại", time: new Date(), id_user: req.body.id_user})
