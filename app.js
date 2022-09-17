@@ -190,4 +190,4 @@ io.on("connection", (socket)=> {
 
 connectMongo()
 
-httpServer.listen(process.env.PORT || 4000, ()=> console.log("Server run port 4000"))
+httpServer.listen(process.env.PORT || 4001, ()=> console.log("Server run port "+process.env.PORT || 4001))
