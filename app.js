@@ -42,6 +42,7 @@ import get_user_2fa from "./controller/get_user_2fa.js"
 import get_sum_profile_7_days from "./controller/get_sum_profile_7_days.js"
 import get_sum_subscribe_7_days from "./controller/get_sum_subscribe_7_days.js"
 import history_admin from "./controller/history_admin.js"
+import get_amount_product from "./controller/get_amount_product.js"
 // import multer from "multer"
 // const upload= multer()
 
@@ -68,8 +69,10 @@ app.post("/recharge/manual", recharge_manual)
 app.post("/", index)
 app.post("/edit/add/hotmail", add_service_hotmail)
 app.post("/edit/add/gmail", add_service_gmail)
+//
 app.get("/edit/get/hotmail", get_service_hotmail)
 app.get("/edit/get/gmail", get_service_gmail)
+//
 app.post("/upload_file/hotmail", upload_file_hotmail)
 app.post("/upload_file/gmail", upload_file_gmail)
 app.post("/buy/account", buy_account)
@@ -94,6 +97,7 @@ app.post("/2fa/user", get_user_2fa)
 app.post("/stats/sum/profit", get_sum_profile_7_days)
 app.post("/stats/sum/subscribe", get_sum_subscribe_7_days)
 app.post("/ad/history", history_admin)
+app.get("/get/amount/product", get_amount_product)
 
 app.post('/create_payment_url', function (req, res, next) {
     var ipAddr = req.headers['x-forwarded-for'] ||
@@ -170,14 +174,15 @@ io.on("connection", (socket)=> {
             io.to(data.id_room).emit("verify1", {is_verify_1: true, token: v4()})
         }
     })
-    //
+    // login oauth2
     socket.on("login_auth2", (data)=> {
         socket.join(data.roomId)
         if(io.sockets.adapter.rooms.get(data.roomId).size > 1 ) {
             io.to(data.roomId).emit("twoFa", {is_verify: true, token: v4()})
         } 
     })
-    
+    // update amount
+
 })
 
 connectMongo()
