@@ -39,6 +39,9 @@ import render_text from "./controller/render_text.js"
 import { v4 } from "uuid"
 import send_mail_verify from "./background/send_mail_verify.js"
 import get_user_2fa from "./controller/get_user_2fa.js"
+import get_sum_profile_7_days from "./controller/get_sum_profile_7_days.js"
+import get_sum_subscribe_7_days from "./controller/get_sum_subscribe_7_days.js"
+import history_admin from "./controller/history_admin.js"
 // import multer from "multer"
 // const upload= multer()
 
@@ -88,6 +91,9 @@ app.get("/remove/miscellaneous", remove_misscellaneous)
 app.post("/render/text", render_text)
 app.post("/auth/verify", send_mail_verify)
 app.post("/2fa/user", get_user_2fa)
+app.post("/stats/sum/profit", get_sum_profile_7_days)
+app.post("/stats/sum/subscribe", get_sum_subscribe_7_days)
+app.post("/ad/history", history_admin)
 
 app.post('/create_payment_url', function (req, res, next) {
     var ipAddr = req.headers['x-forwarded-for'] ||

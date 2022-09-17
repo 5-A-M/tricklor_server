@@ -25,6 +25,11 @@ const buy_account= (req, res)=> {
                         else console.log(result.insertedId)
                     })
                     dbconnection.collection("receipt").insertOne({code_receipt: code_receipt, amount: -parseInt(req.body.price), state: true, note: "Mua tài khoản hotmail", time: new Date(), id_user: req.body.id_user})
+                    //
+                    dbconnection.collection("stats").insertOne({code_stats: code_receipt, amount: parseInt(req.body.price), id_user: req.body.id_user, date: moment(new Date()).format("DD-MM-YYYY hh:mm:ss A"), type: "history", state: true, info: {account: result1.account}, password: result1.password}, function(err, result) {
+                        if(err) throw err
+                    })
+                    //
                     return res.status(200).json({message: "Mua tài khoản thành công", data: {...result1}, purchase: true, code_bill: v4()})
                 })
             }
