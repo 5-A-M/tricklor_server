@@ -184,7 +184,7 @@ io.on("connection", (socket)=> {
     // update amount
     socket.on("update_amount", data=>{ 
         let newAmount= parseInt(data.amount) - 1
-        socket.emit("update_amount_from_server", {amount: newAmount})
+        io.emit("update_amount_from_server", {amount: newAmount})
     })
 })
 
