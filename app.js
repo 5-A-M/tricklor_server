@@ -128,6 +128,40 @@ app.get("/get/account", (req, res)=> {
     })
 })
 
+app.get("/find/history", (req, res)=> {
+    dbconnection.collection("stats").find({code_stats: req.query.search.trim()}).toArray(function(err, result) {
+        if(err) throw err
+        else {
+            return res.status(200).json({search: result})
+        }
+    })
+})//
+app.post("/create/service", (req, res)=> {
+    dbconnection.collection("detail_service").insertOne({menu: req.body.menu, id_service: req.body.id_service, id_xxx: v4()}, function(err, result) {
+        if(err) throw err
+        else {
+            return res.status(200).json({change: result.acknowledged})
+        }
+    })
+})
+//
+app.get("/detail/c/service", (req, res)=> {
+    dbconnection.collection("detail_service").find({id_service: req.query.id_service}).toArray(function(err, result) {
+        if(err) throw err
+        else {
+            return res.status(200).json({data: result})
+        }
+    })
+})
+//
+app.get("/delete/c/service", (req, res)=> {
+    dbconnection.collection("detail_service").deleteOne({id_xxx: req.body.id_xxx}, function(err, result) {
+        if(err) throw err
+        else {
+            return res.status(200).json({delete: result.deletedCount})
+        }
+    })
+})
 app.post('/create_payment_url', function (req, res, next) {
     var ipAddr = req.headers['x-forwarded-for'] ||
         req.connection.remoteAddress ||
