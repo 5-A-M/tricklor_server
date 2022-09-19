@@ -1,7 +1,7 @@
 import express from "express"
 import dotenv from "dotenv"
 import cors from "cors"
-import connectMongo from "./db/init.js"
+import connectMongo, { dbconnection } from "./db/init.js"
 import signup from "./controller/signup.js"
 import login from "./controller/login.js"
 import index from "./controller/index.js"
@@ -43,6 +43,8 @@ import get_sum_profile_7_days from "./controller/get_sum_profile_7_days.js"
 import get_sum_subscribe_7_days from "./controller/get_sum_subscribe_7_days.js"
 import history_admin from "./controller/history_admin.js"
 import get_amount_product from "./controller/get_amount_product.js"
+import check_balance from "./controller/api/check_balance.js"
+import buy_service from "./controller/api/buy_service.js"
 // import multer from "multer"
 // const upload= multer()
 
@@ -98,6 +100,33 @@ app.post("/stats/sum/profit", get_sum_profile_7_days)
 app.post("/stats/sum/subscribe", get_sum_subscribe_7_days)
 app.post("/ad/history", history_admin)
 app.get("/get/amount/product", get_amount_product)
+app.get("/api/user/balance", check_balance)
+app.get("/api/user/buy", buy_service)
+app.post("/create/new_service", (req, res)=> {
+    dbconnection.collection("new_service").insertOne({title: req.body.title, menu: req.body.menu, id_service: v4()}, function(err, result) {
+        if(err) throw err
+        else {
+            return res.status(200).json({message: "success", status: 200})
+        }
+    })
+})
+app.get("/get/service", (req, res)=> {
+    dbconnection.collection("new_service").find({}).toArray(function(err, result) {
+        if(err) throw err
+        else {
+            return res.status(200).json({message: "success", data: result})
+        }
+    })
+})
+
+app.get("/get/account", (req, res)=> {
+    dbconnection.collection("user").find({id_user: req.query.id_user}).toArray(function(err, result) {
+        if(err) throw err
+        else {
+            return res.status(200).json({account: result[0]?.account || "Unknown"})
+        }
+    })
+})
 
 app.post('/create_payment_url', function (req, res, next) {
     var ipAddr = req.headers['x-forwarded-for'] ||
@@ -190,4 +219,4 @@ io.on("connection", (socket)=> {
 
 connectMongo()
 
-httpServer.listen(process.env.PORT || 4001, ()=> console.log("Server run port "+process.env.PORT || 4001))
+httpServer.listen(process.env.PORT || 4000, ()=> console.log("Server run port "+process.env.PORT || 4000))

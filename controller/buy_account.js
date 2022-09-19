@@ -27,7 +27,7 @@ const buy_account= (req, res)=> {
                     })
                     dbconnection.collection("receipt").insertOne({code_receipt: code_receipt, amount: -parseInt(req.body.price), state: true, note: "Mua tài khoản hotmail", time: new Date(), id_user: req.body.id_user})
                     //
-                    dbconnection.collection("stats").insertOne({code_stats: code_receipt, amount: parseInt(req.body.price), id_user: req.body.id_user, date: moment(new Date()).format("DD-MM-YYYY hh:mm:ss A"), type: "history", state: true, info: {account: result1.account}, password: result1.password}, function(err, result) {
+                    dbconnection.collection("stats").insertOne({code_stats: code_receipt, amount: parseInt(req.body.price), id_user: req.body.id_user, date: moment(new Date()).format("DD-MM-YYYY hh:mm:ss A"), type: "history", state: true, info: {account: result1.account, password: result1.password}}, function(err, result) {
                         if(err) throw err
                     })
                     //
