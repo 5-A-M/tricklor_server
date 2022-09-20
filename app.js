@@ -154,11 +154,43 @@ app.get("/detail/c/service", (req, res)=> {
     })
 })
 //
-app.get("/delete/c/service", (req, res)=> {
-    dbconnection.collection("detail_service").deleteOne({id_xxx: req.body.id_xxx}, function(err, result) {
+app.post("/delete/c/service", (req, res)=> {
+    dbconnection.collection("detail_service").deleteOne({id_xxx: req.body.id_delete}, function(err, result) {
         if(err) throw err
         else {
             return res.status(200).json({delete: result.deletedCount})
+        }
+    })
+})
+//
+app.post("/delete/a/service", (req, res)=> {
+    dbconnection.collection("new_service").deleteOne({id_service: req.body.id_delete}, function(err) {
+        if(err) throw err
+        else {
+            dbconnection.collection("detail_service").deleteMany({id_service: req.body.id_delete}, function(err, result) {
+                if(err) throw err
+                else {
+                    return res.status(200).json({delete: result.deletedCount})
+                }
+            })
+        }
+    })
+})
+//
+app.get("/get/c/service", (req, res)=> {
+    dbconnection.collection("new_service").find({}).toArray(function(err, result) {
+        if(err) throw err
+        else {
+            return res.status(200).json({data: result})
+        }
+    })
+})
+//
+app.get("/get/c/service/detail", (req, res)=> {
+    dbconnection.collection("detail_service").find({id_service: req.query.id_service}).toArray(function(err, result) {
+        if(err) throw err
+        else {
+            return res.status(200).json({data: result})
         }
     })
 })
