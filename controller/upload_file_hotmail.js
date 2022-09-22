@@ -25,11 +25,12 @@ const upload_file_hotmail = (req, res) => {
             })
             dbconnection.collection("product").insertMany(newArray, function(err, result) {
                 if(err) throw err
+                fs.unlink(__dirname + files.file.originalFilename, function(err) {
+                    if(err) throw err
+                })
                 return res.status(200).json({message: "Đăng sản phẩm thành công", count: result.insertedCount})
             })
-            fs.unlink(__dirname + files.file.originalFilename, function(err) {
-                if(err) throw err
-            })
+            
         })
     })
 }

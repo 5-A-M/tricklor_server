@@ -278,7 +278,10 @@ io.on("connection", (socket)=> {
     })
     // update amount
     socket.on("update_amount", data=>{ 
-        let newAmount= parseInt(data.amount) - 1
+        if(parseInt(data.amount) <=0 ) {
+            return io.emit("update_amount_from_server", {amount: 0})
+        }
+        let newAmount= parseInt(data.amount) - parseInt(data.number)
         io.emit("update_amount_from_server", {amount: newAmount})
     })
 })
