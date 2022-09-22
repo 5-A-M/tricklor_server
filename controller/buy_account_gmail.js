@@ -16,7 +16,6 @@ const buy_account_gmail= (req, res)=> {
                     if(err) throw err
                     dbconnection.collection("product_gmail").deleteOne({"_id": ObjectId(result1._id)}, function(err, result2) {
                         if(err) throw err
-                        else console.log(result2.deletedCount)
                     })
                     dbconnection.collection("receipt").insertOne({code_receipt: v4(), amount: -parseInt(req.body.price), state: true, note: "Mua tài khoản gmail", time: new Date(), id_user: req.body.id_user})
                     //
@@ -37,7 +36,6 @@ const buy_account_gmail= (req, res)=> {
                     if(err) throw err
                     dbconnection.collection("product_gmail").deleteOne({"_id": ObjectId(result1._id)}, function(err, result2) {
                         if(err) throw err
-                        else console.log(result2.deletedCount)
                     })
                     dbconnection.collection("receipt").insertOne({code_receipt: v4(), amount: -parseInt(req.body.price), state: true, note: "Mua tài khoản gmail", time: new Date(), id_user: req.body.id_user})
                     return res.status(200).json({message: "Mua tài khoản thành công", data: {...result1}})

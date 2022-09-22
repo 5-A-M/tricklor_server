@@ -45,6 +45,8 @@ import history_admin from "./controller/history_admin.js"
 import get_amount_product from "./controller/get_amount_product.js"
 import check_balance from "./controller/api/check_balance.js"
 import buy_service from "./controller/api/buy_service.js"
+import up_any_service from "./controller/up_any_service.js"
+import check_payment_realtime from "./controller/payment/check_payment_realtime.js"
 // import multer from "multer"
 // const upload= multer()
 
@@ -102,6 +104,7 @@ app.post("/ad/history", history_admin)
 app.get("/get/amount/product", get_amount_product)
 app.get("/api/user/balance", check_balance)
 app.get("/api/user/buy", buy_service)
+app.post("/up/any/service", up_any_service)
 app.post("/create/new_service", (req, res)=> {
     dbconnection.collection("new_service").insertOne({title: req.body.title, menu: req.body.menu, id_service: v4()}, function(err, result) {
         if(err) throw err
@@ -194,6 +197,16 @@ app.get("/get/c/service/detail", (req, res)=> {
         }
     })
 })
+//
+app.post("/add/price/c/service", (req, res)=> {
+    dbconnection.collection("new_service").updateOne({id_service: req.body.id_service}, {$set: {price: parseInt(req.body.price)}}, function(err, result) {
+        if(err) throw err
+        else {
+            return res.status(200).json({data: result})
+        }
+    })
+})
+
 app.post('/create_payment_url', function (req, res, next) {
     var ipAddr = req.headers['x-forwarded-for'] ||
         req.connection.remoteAddress ||
@@ -283,6 +296,10 @@ io.on("connection", (socket)=> {
         }
         let newAmount= parseInt(data.amount) - parseInt(data.number)
         io.emit("update_amount_from_server", {amount: newAmount})
+    })
+    // check payment 
+    socket.on("check_payment_from_server", data=> {
+        check_payment_realtime(data, socket, io)
     })
 })
 

@@ -12,7 +12,6 @@ const check_payment= async (req, res)=> {
         dbconnection.collection("user").updateOne({id_user: req.body.id_user}, {$set: {balance:parseInt(req.body.recharge) + parseInt(req.body.balance)}},function(err, result) {
             if(err) throw err
             else {
-                console.log(result.length)
             }
         })
         const code_receipt= v4()
@@ -23,7 +22,6 @@ const check_payment= async (req, res)=> {
         dbconnection.collection("receipt").insertOne({code_receipt: code_receipt, amount: req.body.recharge, state: true, note: "Nạp tiền từ hệ thống", time: new Date(), id_user: req.body.id_user}, function(err, result) {
             if(err) throw err
             else {
-                console.log(result.insertedId)
             }
         })
         return res.status(200).json({status: true, message: "success"})

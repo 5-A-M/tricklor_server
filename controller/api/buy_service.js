@@ -6,7 +6,7 @@ const buy_service= (req, res)=> {
     dbconnection.collection("user").find({api_key: req.query.apiKey}).toArray(function(err, result) {
         if(err) return res.status(200).json({error_code: 400, status: false, message: "Error"})
         if(result.length < 1) return res.status(200).json({error_code: 401, status: false, message: "Unknown"})
-        else {
+        else {  
             const balanceUser= result[0].balance
             dbconnection.collection("type_pusrchase").find({title: req.query.account_type}).toArray(function(err, result) {
                 if(err) return res.status(200).json({error_code: 400, status: false, message: "Error"})
