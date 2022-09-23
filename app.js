@@ -206,6 +206,22 @@ app.post("/add/price/c/service", (req, res)=> {
         }
     })
 })
+//
+app.post("/up/c/payment", (req, res)=> {
+    dbconnection.collection("payment_list").insertOne({id :req.body.id, time: req.body.time}, function(err, result) {
+        if(err) throw err
+        return res.status(200).json({message: "success"})
+    })
+})
+//
+app.get("/get/c/payment", (req, res)=> {
+    dbconnection.collection("payment_list").find({}).sort({time: -1}).toArray(function(err, result) {
+        if(err) throw err
+        else {
+            return res.status(200).json({id: result[0]?.id || "", time: result[0]?.time || ""})
+        }
+    })
+})
 
 app.post('/create_payment_url', function (req, res, next) {
     var ipAddr = req.headers['x-forwarded-for'] ||

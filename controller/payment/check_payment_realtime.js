@@ -1,6 +1,8 @@
 import axios from "axios"
+import { dbconnection } from "../../db/init.js"
 
 const check_payment_realtime= async (data, socket, io)=> {
+
     setInterval( async()=> {
         const res= await axios({
             headers: {
@@ -12,6 +14,7 @@ const check_payment_realtime= async (data, socket, io)=> {
             responseType: "json",
         })
         const result= await res.data
+        // dbconnection.collection("payment_list").insertOne({ id: result.data.records })
         socket.emit("check_payment_to_client", {data: result.data.records[0]})
     }, 7000)
 }
