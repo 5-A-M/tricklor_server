@@ -47,6 +47,12 @@ import check_balance from "./controller/api/check_balance.js"
 import buy_service from "./controller/api/buy_service.js"
 import up_any_service from "./controller/up_any_service.js"
 import check_payment_realtime from "./controller/payment/check_payment_realtime.js"
+import forgot_password from "./controller/forgot_password.js"
+import md5 from "md5"
+import compare_password from "./middleware/compare_password.js"
+import delete_history_user from "./cron/delete_history_user.js"
+import delete_history_admin from "./cron/delete_history_admin.js"
+import test_cron from "./cron/test_cron.js"
 // import multer from "multer"
 // const upload= multer()
 
@@ -139,8 +145,8 @@ app.get("/find/history", (req, res)=> {
         }
     })
 })//
-app.post("/create/service", (req, res)=> {
-    dbconnection.collection("detail_service").insertOne({menu: req.body.menu, id_service: req.body.id_service, id_xxx: v4()}, function(err, result) {
+app.post("/create/d/service", (req, res)=> {
+    dbconnection.collection("detail_service").insertOne({menu: req.body.menu, id_service: req.body.id_service, id_xxx: v4(), price: req.body.price, nation: req.body.nation}, function(err, result) {
         if(err) throw err
         else {
             return res.status(200).json({change: result.acknowledged})
@@ -222,7 +228,76 @@ app.get("/get/c/payment", (req, res)=> {
         }
     })
 })
-
+//
+// app.post("/forgot_password/c/back", forgot_password)
+app.get("/find/c/email", (req, res)=> {
+    dbconnection.collection("user").find({email: req.query.email}).toArray((err, result)=> {
+        if(err) throw err
+        else {
+            const newResult= result.map(({account, id_user, ...info})=> ({account, id_user}))
+            return res.status(200).json({data: newResult})
+        }
+    })
+})
+//
+app.post("/get/code/c/forgot", forgot_password)
+//
+app.post("/verify/c/code", (req, res)=> {
+   dbconnection.collection("verify_code").find({account: req.body.account}).toArray(function(err, result) {
+    if(err) throw err
+    else {
+        if(result.length > 0) {
+            if(parseInt(req.body.code) === parseInt(result[0].code)) {
+                dbconnection.collection("verify_code").deleteMany({account: req.body.account}, function(err, result) {
+                    if(err) throw err
+                    res.status(200).json({data: {message: "Xác thực thành công.", verify: true}})
+                })
+            }
+            else {
+                res.status(200).json({data: {message: "Mã xác thực không chính xác hoặc đã hết hạn, Vui lòng thử lại", verify: false}})
+            }
+        }
+        else {
+            res.status(200).json({data: {message: "Lỗi không xác định", verify: false}})
+        }
+    }
+   })
+})
+//
+app.post("/reset/c/password", compare_password, (req, res)=> {
+    dbconnection.collection("user").updateOne({account: req.body.account}, {$set: {password: md5(req.body.password)}}, function(err, result) {
+        if(err) throw err
+        else {
+            return res.status(200).json({message: "Đặt lại mật khẩu thành công", reset: true})
+        }
+    })
+})
+//
+app.post("/set/c/lang", (req, res)=> {
+    dbconnection.collection("lang").updateOne({id_user: req.body.id_user}, {$set: {lang: req.body.lang}}, function(err, result) {
+        if(err) throw err
+        else if(result.modifiedCount <= 0 ) {
+            dbconnection.collection("lang").insertOne({id_user: req.body.id_user, lang: req.body.lang}, function(err, result) {
+                if(err) throw err
+                else {
+                    return res.status(200).json({message: "Thay đổi ngôn ngữ thành công", lang: req.body.lang})
+                }
+            })
+        }
+        else {
+            return res.status(200).json({message: "Thay đổi ngôn ngữ thành công", lang: req.body.lang})
+        }
+    })
+})
+//
+app.get("/cron/c/ad", (req, res)=> {
+    dbconnection.collection("cron").findOne(function(err, result) {
+        if(err) throw err
+        else {
+            return res.status(200).json({...result})
+        }
+    })
+})
 app.post('/create_payment_url', function (req, res, next) {
     var ipAddr = req.headers['x-forwarded-for'] ||
         req.connection.remoteAddress ||
@@ -287,6 +362,14 @@ function sortObject(obj) {
     }
     return sorted;
 }
+// cron
+delete_history_user()
+test_cron()
+// cron route control by admin
+
+app.post("/delete/c/schedule", delete_history_admin)
+
+// socket
 io.on("connection", (socket)=> {
     // console.log(socket.id)
     socket.on("join_room", (data)=> {

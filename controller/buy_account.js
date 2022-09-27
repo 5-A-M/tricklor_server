@@ -13,7 +13,7 @@ const buy_account= (req, res)=> {
     // don't enough amount
     if(parseInt(req.body.amount) > parseInt(req.body.amountX)) {
     dbconnection.collection("receipt").insertOne({code_receipt: v4(), amount: 0, state: false, note: "Mua tài khoản thất bại", time: new Date(), id_user: req.body.id_user})
-    return res.status(200).json({message: "Số lượng không đủ, Vui lòng thử lại số lượng khác", purchase: false})
+    return res.status(200).json({message: "Số lượng hàng không đủ, Vui lòng thử lại số lượng nhỏ hơn", purchase: false})
     }
     const code_receipt= v4()
     // Buy success
@@ -33,9 +33,9 @@ const buy_account= (req, res)=> {
                     dbconnection.collection("detail_order_history").insertOne({code_receipt: code_receipt, data: result1, cost: req.body.price, time_created: new Date()}, function(err, result) {
                         if(err) throw err
                     })
-                    dbconnection.collection("receipt").insertOne({code_receipt: code_receipt, amount: -parseInt(req.body.price), state: true, note: "Mua tài khoản hotmail", time: new Date(), id_user: req.body.id_user})
+                    dbconnection.collection("receipt").insertOne({code_receipt: code_receipt, amount: -parseInt(req.body.price), state: true, note: `Mua tài khoản ${req.body.name}`, time: new Date(), id_user: req.body.id_user})
                     //
-                    dbconnection.collection("stats").insertOne({code_stats: code_receipt, amount: parseInt(req.body.price), id_user: req.body.id_user, date: moment(new Date()).format("DD-MM-YYYY hh:mm:ss A"), type: "history", state: true, info: result1}, function(err, result) {
+                    dbconnection.collection("stats").insertOne({code_stats: code_receipt, amount: parseInt(req.body.price),name: req.body.name ,id_user: req.body.id_user, date: moment(new Date()).format("DD-MM-YYYY hh:mm:ss A"), type: "history", state: true, info: result1, name: req.body.name, name_account: req.body.name_account, time_created: moment(new Date()).valueOf()}, function(err, result) {
                         if(err) throw err
                     })
                     //
@@ -57,7 +57,7 @@ const buy_account= (req, res)=> {
                     dbconnection.collection("detail_order_history").insertOne({code_receipt: code_receipt, data: result1, cost: req.body.price, time_created: new Date()}, function(err, result) {
                         if(err) throw err
                     })
-                    dbconnection.collection("receipt").insertOne({code_receipt: code_receipt, amount: -parseInt(req.body.price), state: true, note: "Mua tài khoản hotmail", time: new Date(), id_user: req.body.id_user})
+                    dbconnection.collection("receipt").insertOne({code_receipt: code_receipt, amount: -parseInt(req.body.price), state: true, note: `Mua tài khoản ${req.body.name}`, time: new Date(), id_user: req.body.id_user})
                     return res.status(200).json({message: "Mua tài khoản thành công", data: {...result1}})
                 })
             }

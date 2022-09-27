@@ -19,7 +19,7 @@ const buy_account_gmail= (req, res)=> {
                     })
                     dbconnection.collection("receipt").insertOne({code_receipt: v4(), amount: -parseInt(req.body.price), state: true, note: "Mua tài khoản gmail", time: new Date(), id_user: req.body.id_user})
                     //
-                    dbconnection.collection("stats").insertOne({code_stats: code_receipt, amount: parseInt(req.body.price), id_user: req.body.id_user, date: moment(new Date()).format("DD-MM-YYYY hh:mm:ss A"), type: "history", state: true, info: {account: result1.account, password: result1.password}}, function(err, result) {
+                    dbconnection.collection("stats").insertOne({code_stats: code_receipt, amount: parseInt(req.body.price), id_user: req.body.id_user, date: moment(new Date()).format("DD-MM-YYYY hh:mm:ss A"), type: "history", name: req.body.name, state: true, info: {account: result1.account, password: result1.password}, name: req.body.name, name_account: req.body.name_account, time_created: moment(new Date()).valueOf()}, function(err, result) {
                         if(err) throw err
                     })
                     //

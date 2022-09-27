@@ -11,7 +11,11 @@ const signup= (req, res)=> {
         }
         else {
             const id_key= v4()
-            dbconnection.collection("user").insertOne({account: req.body.account, password: md5(req.body.password), email: req.body.email, id_user: v4(), id_key: id_key, id_secret: md5(id_key), balance: 0, promotion: 0, api_key: v4(), token_qr_code: v4()}, function(err, result) {
+            const id_user= v4()
+            dbconnection.collection("lang").insertOne({id_user: id_user, lang: "vn"}, function(err, result) {
+                if(err) throw err
+            })
+            dbconnection.collection("user").insertOne({account: req.body.account, password: md5(req.body.password), email: req.body.email, id_user: id_user, id_key: id_key, id_secret: md5(id_key), balance: 0, promotion: 0, api_key: v4(), token_qr_code: v4()}, function(err, result) {
                 if(err) throw err
                 dbconnection.collection("stats").insertOne({code_stats: v4(), subscribe: 1, id_user_f: v4(), date: moment(new Date()).format("DD-MM-YYYY"), type: "subscribe"}, function(err, result) {
                     if(err) throw err
