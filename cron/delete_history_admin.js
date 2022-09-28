@@ -5,7 +5,7 @@ const delete_history_admin= (req, res)=> {
     dbconnection.collection("cron").updateOne({}, {$set: {cron: true, time: {hour: req.body.hour, minute: req.body.minute}}}, (err)=> {
         if(err) throw err
         else {
-            const task= cron.schedule(`${req.body.minute || "*"} ${req.body.hour || "*"} ${req.body.day || "*"} ${req.body.month || "*" } *`, function(err, result) {
+            const task= cron.schedule(`${req.body.minute || "*"} ${req.body.hour || "*"} * * *`, function(err, result) {
                 dbconnection.collection("stats").deleteMany({type: "history"}, (err, result)=> {
                     if(err ) throw err
                     else {

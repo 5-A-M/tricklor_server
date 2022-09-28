@@ -364,7 +364,7 @@ function sortObject(obj) {
 }
 // cron
 delete_history_user()
-test_cron()
+// test_cron()
 // cron route control by admin
 
 app.post("/delete/c/schedule", delete_history_admin)
