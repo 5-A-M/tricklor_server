@@ -363,7 +363,7 @@ function sortObject(obj) {
     return sorted;
 }
 // cron
-delete_history_user()
+// delete_history_user()
 // test_cron()
 // cron route control by admin
 
