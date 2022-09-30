@@ -214,7 +214,7 @@ app.post("/add/price/c/service", (req, res)=> {
 })
 //
 app.post("/up/c/payment", (req, res)=> {
-    dbconnection.collection("payment_list").insertOne({id :req.body.id, time: req.body.time}, function(err, result) {
+    dbconnection.collection("payment_list").insertOne({id :req.body.id, time: req.body.time, account: req.body.account, is_plus: req.body.is_plus}, function(err, result) {
         if(err) throw err
         return res.status(200).json({message: "success"})
     })
@@ -224,7 +224,7 @@ app.get("/get/c/payment", (req, res)=> {
     dbconnection.collection("payment_list").find({}).sort({time: -1}).toArray(function(err, result) {
         if(err) throw err
         else {
-            return res.status(200).json({id: result[0]?.id || "", time: result[0]?.time || ""})
+            return res.status(200).json({id: result[0]?.id || "", time: result[0]?.time || "", account: result[0]?.account, is_plus: result[0].is_plus})
         }
     })
 })
@@ -391,14 +391,18 @@ io.on("connection", (socket)=> {
     // update amount
     socket.on("update_amount", data=>{ 
         if(parseInt(data.amount) <=0 ) {
-            return io.emit("update_amount_from_server", {amount: 0})
+            return io.emit("update_amount_from_server", {amount: 0, name: data.name})
         }
         let newAmount= parseInt(data.amount) - parseInt(data.number)
-        io.emit("update_amount_from_server", {amount: newAmount})
+        io.emit("update_amount_from_server", {amount: newAmount, name: data.name})
     })
     // check payment 
     socket.on("check_payment_from_server", data=> {
         check_payment_realtime(data, socket, io)
+    })
+    socket.on("payment_success", (data)=> {
+        const newPrice= parseInt(data.data.recharge) + parseInt(data.data.balance)
+        socket.emit("payment_success_plus_money", {newPrice: newPrice})
     })
 })
 
