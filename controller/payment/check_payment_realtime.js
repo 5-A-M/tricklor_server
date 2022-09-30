@@ -1,9 +1,9 @@
 import axios from "axios"
-import { dbconnection } from "../../db/init.js"
+// import { dbconnection } from "../../db/init.js"
 
 const check_payment_realtime= async (data, socket, io)=> {
 
-    setInterval( async()=> {
+    setInterval( async function XXX() {
         try {
             const res= await axios({
                 headers: {

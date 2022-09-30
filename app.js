@@ -53,6 +53,7 @@ import compare_password from "./middleware/compare_password.js"
 import delete_history_user from "./cron/delete_history_user.js"
 import delete_history_admin from "./cron/delete_history_admin.js"
 import test_cron from "./cron/test_cron.js"
+import translate1 from "./controller/translate/translate1.js"
 // import multer from "multer"
 // const upload= multer()
 
@@ -146,7 +147,7 @@ app.get("/find/history", (req, res)=> {
     })
 })//
 app.post("/create/d/service", (req, res)=> {
-    dbconnection.collection("detail_service").insertOne({menu: req.body.menu, id_service: req.body.id_service, id_xxx: v4(), price: req.body.price, nation: req.body.nation}, function(err, result) {
+    dbconnection.collection("detail_service").insertOne({menu: req.body.menu, id_service: req.body.id_service, id_xxx: v4(), price: req.body.price, nation: req.body.nation, detail_product: req.body.detail_product}, function(err, result) {
         if(err) throw err
         else {
             return res.status(200).json({change: result.acknowledged})
@@ -298,6 +299,8 @@ app.get("/cron/c/ad", (req, res)=> {
         }
     })
 })
+// 
+app.post("/api/t/translate", translate1 )
 app.post('/create_payment_url', function (req, res, next) {
     var ipAddr = req.headers['x-forwarded-for'] ||
         req.connection.remoteAddress ||
