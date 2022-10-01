@@ -22,7 +22,7 @@ const buy_account= (req, res)=> {
             if(err) throw err
             if(result.modifiedCount > 0 || result.matchedCount > 0) {
                 // Buy success
-                dbconnection.collection("product").find({}).limit(parseInt(req.body.amount)).toArray(function(err, result1) {
+                dbconnection.collection("product").find({name: req.body.name}).limit(parseInt(req.body.amount)).toArray(function(err, result1) {
                     if(err) throw err
                     result1.map(item=> {
                         dbconnection.collection("product").deleteOne({"_id": ObjectId(item._id)}, function(err, result2) {
