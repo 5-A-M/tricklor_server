@@ -374,12 +374,8 @@ app.post("/delete/c/schedule", delete_history_admin)
 
 // socket
 io.on("connection", (socket)=> {
-    // console.log(socket.id)
     socket.on("join_room", (data)=> {
-        // console.log(data.id_room)
         socket.join(data.id_room)
-        // console.log(io.sockets.adapter.rooms.get(data.id_room))
-        // console.log(io.sockets.adapter.rooms.get(data.id_room).size)
         if(io.sockets.adapter.rooms.get(data.id_room).size > 1) {
             io.to(data.id_room).emit("verify1", {is_verify_1: true, token: v4()})
         }
