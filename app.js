@@ -376,7 +376,7 @@ app.post("/delete/c/schedule", delete_history_admin)
 io.on("connection", (socket)=> {
     // console.log(socket.id)
     socket.on("join_room", (data)=> {
-        console.log(data.id_room)
+        // console.log(data.id_room)
         socket.join(data.id_room)
         // console.log(io.sockets.adapter.rooms.get(data.id_room))
         // console.log(io.sockets.adapter.rooms.get(data.id_room).size)
@@ -406,6 +406,12 @@ io.on("connection", (socket)=> {
     socket.on("payment_success", (data)=> {
         const newPrice= parseInt(data.data.recharge) + parseInt(data.data.balance)
         socket.emit("payment_success_plus_money", {newPrice: newPrice})
+    })
+    socket.on("check_login_other_device", data=> {
+        socket.join(data.roomId)
+        if(io.sockets.adapter.rooms.get(data.roomId).size >=2 ) {
+            socket.to(data.roomId).emit("check_login_other_device_from_server", {logout: true})
+        }
     })
 })
 
