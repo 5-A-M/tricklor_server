@@ -4,7 +4,7 @@ import { dbconnection } from "../db/init.js"
 const up_any_service= (req, res)=> {
     const a= []
     if(req.body.data) {
-        req.body.data.split("\n").map(item=> a.push({account: item.split("|")?.[0], password: item.split("|")?.[1], id: v4(), name: req.body.name}))
+        req.body.data.split("\n").map(item=> a.push({account: item.split("|")?.[0], password: item.split("|")?.[1], full_account: item, id: v4(), name: req.body.name}))
     }
     dbconnection.collection("product").insertMany(a, function(err, result) {
         if(err) throw err
